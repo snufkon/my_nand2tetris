@@ -1,0 +1,14 @@
+CHIP ALUPart {
+     IN
+        in[16],         // 16-bit inputs
+        z,              // zero the input
+        n;              // negate the input
+
+     OUT
+        out[16];        // 16-bit output
+
+     PARTS:
+        Mux16(a=in, b=false, sel=z, out=out1);
+        Not16(in=out1, out=out2);
+        Mux16(a=out1, b=out2, sel=n, out=out);
+}

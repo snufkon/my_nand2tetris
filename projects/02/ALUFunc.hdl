@@ -1,0 +1,13 @@
+CHIP ALUFunc {
+     IN
+        x[16], y[16],   // 16-bit inputs
+        f;              // compute out = x + y (if 1) or x & y (if 0)
+
+     OUT
+        out[16];        // 16-bit output
+
+     PARTS:
+        And16(a=x, b=y, out=out1);
+        Add16(a=x, b=y, out=out2);
+        Mux16(a=out1, b=out2, sel=f, out=out);
+}
