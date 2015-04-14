@@ -50,6 +50,6 @@ CHIP ALU {
         ALUPart(in=out3, z=false, n=no, out=out, out=out4, out[15]=ng);
 
         /* zr */
-        Or16Way(in=out4, out=out6);
-        Not(in=out6, out=zr);
+        Or16Way(in=out4, out=out5);
+        Not(in=out5, out=zr);
 }
