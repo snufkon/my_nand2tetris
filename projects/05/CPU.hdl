@@ -39,5 +39,61 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+
+    /**
+     * A or C instruction
+     *   : instruction[15]
+     * a : instruction[12]
+     * c1: instruction[11]
+     * c2: instruction[10]
+     * c3: instruction[9]
+     * c4: instruction[8]
+     * c5: instruction[7]
+     * c6: instruction[6]
+     * d1: instruction[5]
+     * d2: instruction[4]
+     * d3: instruction[3]
+     * j1: instruction[2]
+     * j2: instruction[1]
+     * j3: instruction[0]
+     **/
+
+
+    // control bit of memory write
+    And(a=instruction[15], b=instruction[3], out=writeM);
+
+    // control bit of A register load
+    Not(in=instruction[15], out=out1);
+    And(a=instruction[15], b=instruction[5], out=out2);
+    Or(a=out1, b=out2, out=loadA);
+
+    // control bit of D register load
+    And(a=instruction[15], b=instruction[4], out=loadD);
+    
+    // A register
+    Mux16(a=instruction, b=outALU, sel=instruction[15], out=out3);
+    ARegister(in=out3, load=loadA, out=outA, out[0..14]=addressM);
+
+    // D register
+    DRegister(in=outALU, load=loadD, out=outD);
+
+    // ALU
+    Mux16(a=outA, b=inM, sel=instruction[12], out=outAorM);
+    ALU(x=outD, y=outAorM, zx=instruction[11], nx=instruction[10],
+                           zy=instruction[9],  ny=instruction[8],
+                           f=instruction[7],   no=instruction[6],
+                           zr=zr, ng=ng, out=outALU, out=outM);
+
+    // control bit of PC load
+    And(a=instruction[2], b=ng, out=lowerJump);
+    And(a=instruction[1], b=zr, out=equalJump);
+    Or(a=ng, b=zr, out=out4);
+    Not(in=out4, out=out5);
+    And(a=instruction[0], b=out5, out=greaterJump);
+    Or(a=lowerJump, b=equalJump, out=lowerEqualJump);
+    And(a=instruction[15], b=greaterJump, out=out6);
+    Or(a=lowerEqualJump, b=out6, out=jump);
+
+    // PC
+    PC(in=outA, load=jump, inc=true, reset=reset, out[0..14]=pc);
 }
