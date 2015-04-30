@@ -91,8 +91,8 @@ CHIP CPU {
     Not(in=out4, out=out5);
     And(a=instruction[0], b=out5, out=greaterJump);
     Or(a=lowerJump, b=equalJump, out=lowerEqualJump);
-    And(a=instruction[15], b=greaterJump, out=out6);
-    Or(a=lowerEqualJump, b=out6, out=jump);
+    Or(a=lowerEqualJump, b=greaterJump, out=out6);
+    And(a=out6, b=instruction[15], out=jump);
 
     // PC
     PC(in=outA, load=jump, inc=true, reset=reset, out[0..14]=pc);
