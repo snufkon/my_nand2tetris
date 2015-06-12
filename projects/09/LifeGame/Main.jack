@@ -1,0 +1,14 @@
+class Main {
+  function void main() {
+    var LifeGame game;
+    var int cellNumOfLine, cellSize, seed;
+
+    let cellNumOfLine = 5;
+    let cellSize = 20;
+    let seed = 15;
+
+    let game = LifeGame.new(cellNumOfLine, cellSize, seed);
+    do game.run();
+    return;
+  }
+}

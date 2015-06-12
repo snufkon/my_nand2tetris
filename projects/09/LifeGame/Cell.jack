@@ -1,0 +1,48 @@
+
+class Cell {
+  field int x, y, size, state;
+
+  constructor Cell new(int _x, int _y, int _size, int _state) {
+    let x = _x;
+    let y = _y;
+    let size = _size;
+    let state = _state;
+
+    return this;
+  }
+
+  method void draw() {
+    var int startX, startY, endX, endY;
+    
+    let startX = x * size;
+    let startY = y * size;
+    let endX = startX + size;
+    let endY = startY + size;
+
+    if (state = 1) {
+      do Screen.setColor(true);  
+    } else {
+      do Screen.setColor(false);
+    }
+    
+    do Screen.drawRectangle(startX, startY, endX, endY);
+    return;
+  }
+
+  method int getPosX() {
+    return x;
+  }
+
+  method int getPosY() {
+    return y;
+  }
+
+  method int getState() {
+    return state;
+  }
+
+  method void setState(int _state) {
+    let state = _state;
+    return;
+  }
+}

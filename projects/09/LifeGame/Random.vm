@@ -1,0 +1,58 @@
+function Random.new 0
+push constant 1
+call Memory.alloc 1
+pop pointer 0
+push argument 0
+pop this 0
+push pointer 0
+return
+function Random.rand 3
+push argument 0
+pop pointer 0
+push constant 20
+call String.new 1
+pop local 1
+push local 1
+push this 0
+call String.setInt 2
+pop temp 0
+push local 1
+push constant 0
+call String.charAt 2
+pop local 2
+label WHILE_EXP0
+push local 1
+call String.length 1
+push constant 3
+gt
+not
+if-goto WHILE_END0
+push local 1
+call String.eraseLastChar 1
+pop temp 0
+goto WHILE_EXP0
+label WHILE_END0
+push local 1
+call String.intValue 1
+pop this 0
+push this 0
+push constant 200
+lt
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 0
+pop local 0
+goto IF_END0
+label IF_FALSE0
+push constant 1
+pop local 0
+label IF_END0
+push this 0
+push this 0
+push constant 4
+call Math.divide 2
+call Math.multiply 2
+pop this 0
+push local 0
+return

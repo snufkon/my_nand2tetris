@@ -1,0 +1,834 @@
+function LifeGame.new 4
+push constant 4
+call Memory.alloc 1
+pop pointer 0
+push argument 0
+pop this 0
+push argument 1
+pop this 1
+push argument 2
+call Random.new 1
+pop local 3
+push this 0
+push this 0
+call Math.multiply 2
+pop this 2
+push this 2
+call Array.new 1
+pop this 3
+push constant 0
+pop local 0
+label WHILE_EXP0
+push local 0
+push this 2
+lt
+not
+if-goto WHILE_END0
+push local 0
+push this 0
+call Math.divide 2
+pop local 2
+push local 0
+push local 2
+push this 0
+call Math.multiply 2
+sub
+pop local 1
+push local 0
+push this 3
+add
+push local 1
+push local 2
+push this 1
+push local 3
+call Random.rand 1
+call Cell.new 4
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push local 0
+push constant 1
+add
+pop local 0
+goto WHILE_EXP0
+label WHILE_END0
+push pointer 0
+return
+function LifeGame.draw 2
+push argument 0
+pop pointer 0
+push constant 0
+pop local 0
+label WHILE_EXP0
+push local 0
+push this 2
+lt
+not
+if-goto WHILE_END0
+push local 0
+push this 3
+add
+pop pointer 1
+push that 0
+pop local 1
+push local 1
+call Cell.draw 1
+pop temp 0
+push local 0
+push constant 1
+add
+pop local 0
+goto WHILE_EXP0
+label WHILE_END0
+push constant 0
+return
+function LifeGame.update 4
+push argument 0
+pop pointer 0
+push this 2
+call Array.new 1
+pop local 3
+push constant 0
+pop local 0
+label WHILE_EXP0
+push local 0
+push this 2
+lt
+not
+if-goto WHILE_END0
+push local 0
+push this 3
+add
+pop pointer 1
+push that 0
+pop local 2
+push pointer 0
+push local 0
+call LifeGame.countLivingCells 2
+pop local 1
+push local 1
+push constant 2
+eq
+push local 1
+push constant 3
+eq
+or
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push local 0
+push local 3
+add
+push constant 1
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+goto IF_END0
+label IF_FALSE0
+push local 0
+push local 3
+add
+push constant 0
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+label IF_END0
+push local 0
+push constant 1
+add
+pop local 0
+goto WHILE_EXP0
+label WHILE_END0
+push constant 0
+pop local 0
+label WHILE_EXP1
+push local 0
+push this 2
+lt
+not
+if-goto WHILE_END1
+push local 0
+push this 3
+add
+pop pointer 1
+push that 0
+pop local 2
+push local 2
+push local 0
+push local 3
+add
+pop pointer 1
+push that 0
+call Cell.setState 2
+pop temp 0
+push local 0
+push constant 1
+add
+pop local 0
+goto WHILE_EXP1
+label WHILE_END1
+push constant 0
+return
+function LifeGame.run 0
+push argument 0
+pop pointer 0
+label WHILE_EXP0
+push constant 0
+not
+not
+if-goto WHILE_END0
+push pointer 0
+call LifeGame.draw 1
+pop temp 0
+push pointer 0
+call LifeGame.update 1
+pop temp 0
+goto WHILE_EXP0
+label WHILE_END0
+push constant 0
+return
+function LifeGame.mod 1
+push argument 0
+pop pointer 0
+push argument 1
+push argument 2
+call Math.divide 2
+pop local 0
+push argument 1
+push argument 2
+push local 0
+call Math.multiply 2
+sub
+return
+function LifeGame.isLeftmost 0
+push argument 0
+pop pointer 0
+push pointer 0
+push argument 1
+push this 0
+call LifeGame.mod 3
+push constant 0
+eq
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 0
+not
+return
+goto IF_END0
+label IF_FALSE0
+push constant 0
+return
+label IF_END0
+function LifeGame.isRightmost 0
+push argument 0
+pop pointer 0
+push pointer 0
+push argument 1
+push constant 1
+add
+push this 0
+call LifeGame.mod 3
+push constant 0
+eq
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 0
+not
+return
+goto IF_END0
+label IF_FALSE0
+push constant 0
+return
+label IF_END0
+function LifeGame.isUppermost 0
+push argument 0
+pop pointer 0
+push argument 1
+push this 0
+sub
+push constant 0
+lt
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 0
+not
+return
+goto IF_END0
+label IF_FALSE0
+push constant 0
+return
+label IF_END0
+function LifeGame.isLowermost 0
+push argument 0
+pop pointer 0
+push argument 1
+push this 0
+add
+push this 2
+push constant 1
+sub
+gt
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 0
+not
+return
+goto IF_END0
+label IF_FALSE0
+push constant 0
+return
+label IF_END0
+function LifeGame.getCellState 1
+push argument 0
+pop pointer 0
+push argument 1
+push this 3
+add
+pop pointer 1
+push that 0
+pop local 0
+push local 0
+call Cell.getState 1
+return
+function LifeGame.countLivingCells 1
+push argument 0
+pop pointer 0
+push constant 0
+pop local 0
+push pointer 0
+push argument 1
+call LifeGame.isLeftmost 2
+push pointer 0
+push argument 1
+call LifeGame.isUppermost 2
+and
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push local 0
+push pointer 0
+push argument 1
+push constant 1
+add
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+add
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+add
+push constant 1
+add
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+return
+label IF_FALSE0
+push pointer 0
+push argument 1
+call LifeGame.isLeftmost 2
+push pointer 0
+push argument 1
+call LifeGame.isLowermost 2
+and
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push local 0
+push pointer 0
+push argument 1
+push this 0
+sub
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+sub
+push constant 1
+add
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push constant 1
+add
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+return
+label IF_FALSE1
+push pointer 0
+push argument 1
+call LifeGame.isRightmost 2
+push pointer 0
+push argument 1
+call LifeGame.isUppermost 2
+and
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+push local 0
+push pointer 0
+push argument 1
+push constant 1
+sub
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+add
+push constant 1
+sub
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+add
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+return
+label IF_FALSE2
+push pointer 0
+push argument 1
+call LifeGame.isRightmost 2
+push pointer 0
+push argument 1
+call LifeGame.isLowermost 2
+and
+if-goto IF_TRUE3
+goto IF_FALSE3
+label IF_TRUE3
+push local 0
+push pointer 0
+push argument 1
+push this 0
+sub
+push constant 1
+sub
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+sub
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push constant 1
+sub
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+return
+label IF_FALSE3
+push pointer 0
+push argument 1
+call LifeGame.isLeftmost 2
+if-goto IF_TRUE4
+goto IF_FALSE4
+label IF_TRUE4
+push local 0
+push pointer 0
+push argument 1
+push this 0
+sub
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+sub
+push constant 1
+add
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push constant 1
+add
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+add
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+add
+push constant 1
+add
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+return
+label IF_FALSE4
+push pointer 0
+push argument 1
+call LifeGame.isRightmost 2
+if-goto IF_TRUE5
+goto IF_FALSE5
+label IF_TRUE5
+push local 0
+push pointer 0
+push argument 1
+push this 0
+sub
+push constant 1
+sub
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+sub
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push constant 1
+sub
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+add
+push constant 1
+sub
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+add
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+return
+label IF_FALSE5
+push pointer 0
+push argument 1
+call LifeGame.isUppermost 2
+if-goto IF_TRUE6
+goto IF_FALSE6
+label IF_TRUE6
+push local 0
+push pointer 0
+push argument 1
+push constant 1
+sub
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push constant 1
+add
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+add
+push constant 1
+sub
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+add
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+add
+push constant 1
+add
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+return
+label IF_FALSE6
+push pointer 0
+push argument 1
+call LifeGame.isLowermost 2
+if-goto IF_TRUE7
+goto IF_FALSE7
+label IF_TRUE7
+push local 0
+push pointer 0
+push argument 1
+push this 0
+sub
+push constant 1
+sub
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+sub
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+sub
+push constant 1
+add
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push constant 1
+sub
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push constant 1
+add
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+return
+label IF_FALSE7
+push local 0
+push pointer 0
+push argument 1
+push this 0
+sub
+push constant 1
+sub
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+sub
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+sub
+push constant 1
+add
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push constant 1
+sub
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push constant 1
+add
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+add
+push constant 1
+sub
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+add
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+push pointer 0
+push argument 1
+push this 0
+add
+push constant 1
+add
+call LifeGame.getCellState 2
+add
+pop local 0
+push local 0
+return
+function LifeGame.printLivingCellsIndex 2
+push argument 0
+pop pointer 0
+push constant 20
+call String.new 1
+push constant 108
+call String.appendChar 2
+push constant 105
+call String.appendChar 2
+push constant 118
+call String.appendChar 2
+push constant 105
+call String.appendChar 2
+push constant 110
+call String.appendChar 2
+push constant 103
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 99
+call String.appendChar 2
+push constant 101
+call String.appendChar 2
+push constant 108
+call String.appendChar 2
+push constant 108
+call String.appendChar 2
+push constant 115
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 105
+call String.appendChar 2
+push constant 110
+call String.appendChar 2
+push constant 100
+call String.appendChar 2
+push constant 101
+call String.appendChar 2
+push constant 120
+call String.appendChar 2
+push constant 58
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+call Output.printString 1
+pop temp 0
+push constant 0
+pop local 0
+label WHILE_EXP0
+push local 0
+push this 2
+lt
+not
+if-goto WHILE_END0
+push local 0
+push this 3
+add
+pop pointer 1
+push that 0
+pop local 1
+push local 1
+call Cell.getState 1
+push constant 1
+eq
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push local 0
+call Output.printInt 1
+pop temp 0
+push constant 1
+call String.new 1
+push constant 44
+call String.appendChar 2
+call Output.printString 1
+pop temp 0
+label IF_FALSE0
+push local 0
+push constant 1
+add
+pop local 0
+goto WHILE_EXP0
+label WHILE_END0
+call Output.println 0
+pop temp 0
+push constant 0
+return

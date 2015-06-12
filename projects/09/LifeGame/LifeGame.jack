@@ -1,0 +1,214 @@
+class LifeGame {
+  field int cellNumOfLine, cellSize, cellNum;
+  field Array cells;
+
+  constructor LifeGame new(int _cellNumOfLine, int _cellSize, int _seed) {
+    var int i, x, y;
+    var Random r;
+
+    let cellNumOfLine = _cellNumOfLine;
+    let cellSize = _cellSize;    
+    let r = Random.new(_seed);
+
+    let cellNum = cellNumOfLine * cellNumOfLine;
+    let cells = Array.new(cellNum);
+
+    let i = 0;
+    while (i < cellNum) {
+      let y = Math.divide(i, cellNumOfLine);
+      let x = i - (y * cellNumOfLine);
+      let cells[i] = Cell.new(x, y, cellSize, r.rand());
+      let i = i + 1;
+    }
+    
+    return this;
+  }
+
+  method void draw() {
+    var int i;
+    var Cell c;
+    
+    let i = 0;
+    while (i < cellNum) {
+      let c = cells[i];
+      do c.draw();
+      let i = i + 1;
+    }
+    return;
+  }
+  
+  method void update() {
+    var int i, count;
+    var Cell c;
+    var Array nextStates;
+    
+    let nextStates = Array.new(cellNum);
+     
+    let i = 0;
+    while (i < cellNum) {
+      let c = cells[i];
+      let count = countLivingCells(i);
+      
+      if ((count = 2) | (count = 3)) {
+        let nextStates[i] = 1;
+      } else {
+        let nextStates[i] = 0;
+      }
+      let i = i + 1;
+    }
+
+    let i = 0;
+    while (i < cellNum) {
+      let c = cells[i];
+      do c.setState(nextStates[i]);
+      let i = i + 1;
+    }
+  
+    return;  
+  }
+
+  method void run() {
+    while (true) {
+      do draw();
+      do update();
+    }
+    return;
+  }  
+
+  method int mod(int x, int y) {
+    var int temp;
+    let temp = Math.divide(x, y) ;
+    return x - (y * temp);
+  }
+
+  method boolean isLeftmost(int i) {
+    if (mod(i, cellNumOfLine) = 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  method boolean isRightmost(int i) {
+    if (mod(i+1, cellNumOfLine) = 0) {
+      return true;
+    } else {
+      return false;
+    }  
+  }
+  
+  method boolean isUppermost(int i) {
+    if ((i - cellNumOfLine) < 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  method boolean isLowermost(int i) {
+    if ((i + cellNumOfLine) > (cellNum - 1)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  method int getCellState(int i) {
+    var Cell c;
+    let c = cells[i];
+    return c.getState();
+  }
+  
+  method int countLivingCells(int i) {
+    var int count;
+    let count = 0;
+
+    if (isLeftmost(i) & isUppermost(i)) {
+      let count = count + getCellState(i+1);
+      let count = count + getCellState(i+cellNumOfLine);
+      let count = count + getCellState(i+cellNumOfLine+1);
+      return count;
+    }
+    if (isLeftmost(i) & isLowermost(i)) {
+      let count = count + getCellState(i-cellNumOfLine);
+      let count = count + getCellState(i-cellNumOfLine+1);
+      let count = count + getCellState(i+1);
+      return count;    
+    }
+    if (isRightmost(i) & isUppermost(i)) {
+      let count = count + getCellState(i-1);
+      let count = count + getCellState(i+cellNumOfLine-1);
+      let count = count + getCellState(i+cellNumOfLine);
+      return count;
+    }    
+    if (isRightmost(i) & isLowermost(i)) {
+      let count = count + getCellState(i-cellNumOfLine-1);
+      let count = count + getCellState(i-cellNumOfLine);
+      let count = count + getCellState(i-1);
+      return count;
+    }
+    if (isLeftmost(i)) {
+      let count = count + getCellState(i-cellNumOfLine);
+      let count = count + getCellState(i-cellNumOfLine+1);
+      let count = count + getCellState(i+1);
+      let count = count + getCellState(i+cellNumOfLine);
+      let count = count + getCellState(i+cellNumOfLine+1);
+      return count;
+    }
+    if (isRightmost(i)) {
+      let count = count + getCellState(i-cellNumOfLine-1);
+      let count = count + getCellState(i-cellNumOfLine);
+      let count = count + getCellState(i-1);
+      let count = count + getCellState(i+cellNumOfLine-1);
+      let count = count + getCellState(i+cellNumOfLine);
+      return count;
+    }
+    if (isUppermost(i)) {
+      let count = count + getCellState(i-1);
+      let count = count + getCellState(i+1);
+      let count = count + getCellState(i+cellNumOfLine-1);
+      let count = count + getCellState(i+cellNumOfLine);
+      let count = count + getCellState(i+cellNumOfLine+1);
+      return count;
+    }
+    if (isLowermost(i)) {
+      let count = count + getCellState(i-cellNumOfLine-1);
+      let count = count + getCellState(i-cellNumOfLine);
+      let count = count + getCellState(i-cellNumOfLine+1);
+      let count = count + getCellState(i-1);
+      let count = count + getCellState(i+1);
+      return count;
+    }
+
+    let count = count + getCellState(i-cellNumOfLine-1);
+    let count = count + getCellState(i-cellNumOfLine);
+    let count = count + getCellState(i-cellNumOfLine+1);
+    let count = count + getCellState(i-1);
+    let count = count + getCellState(i+1);
+    let count = count + getCellState(i+cellNumOfLine-1);
+    let count = count + getCellState(i+cellNumOfLine);
+    let count = count + getCellState(i+cellNumOfLine+1);
+    return count;
+  }
+
+  /* for debug */
+  method void printLivingCellsIndex() {
+    var int i;
+    var Cell c;
+
+    do Output.printString("living cells index: ");
+
+    let i = 0;
+    while (i < cellNum) {
+      let c = cells[i];
+      if (c.getState() = 1) {
+        do Output.printInt(i);
+        do Output.printString(",");
+      }
+      let i = i + 1;
+    }
+    do Output.println();
+    
+    return;
+  }
+}

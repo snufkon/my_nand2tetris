@@ -1,0 +1,33 @@
+class Random {
+  field int seed;
+
+  constructor Random new(int s) {
+    let seed = s;
+    return this;
+  }
+
+  /* return a random value(0 or 1) */
+  method int rand() {
+    var int value;
+    var String s;
+    var Char c;
+
+    let s = String.new(20);
+    do s.setInt(seed);
+    let c = s.charAt(0);
+
+    while (s.length() > 3) {
+      do s.eraseLastChar();
+    }
+    let seed = s.intValue();
+
+    if (seed < 200) {
+      let value = 0;
+    } else {
+      let value = 1;
+    }    
+
+    let seed = seed * (seed / 4);
+    return value;
+  }
+}
