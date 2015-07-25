@@ -8,7 +8,6 @@
 (defn- setup
   [class-name defines]
   (reset! engine/class-name class-name)
-  ;;(stable/start-subroutine)
   (stable/init)
   (doseq [define defines]
     (apply stable/define (-> define (cstr/split #" ") reverse))))
@@ -225,8 +224,6 @@
             "label L1"
             "label L2"] (result-commands)))
 
-    ;; (setup "IfTest" ["var int x"
-    ;;                  "var int size"])
     (read-code
      "if (x) {
         do erase();
@@ -237,11 +234,6 @@
       }")
     (#'jack-compiler.compilation-engine/compile-if)
     (is (tokens-are-all-compiled?))
-    ;; (is (= ["push local 0"
-    ;;         "not"
-    ;;         "if-goto L1"
-    ;;         "call IfTest.erase 1"
-    ;;         ""]))
 
     (read-code
      "if (((y + size) < 254) & ((x + size) < 510)) {
@@ -306,7 +298,6 @@
               "pop temp 0"] (result-commands))))
 
     (testing "method call"
-      (println "start test ========================================")
       (setup "DoTest" ["var String s"])
       (read-code "do s.setInt(10);")
       (#'jack-compiler.compilation-engine/compile-do)
@@ -315,11 +306,7 @@
               "push constant 10"
               "call String.setInt 2"
               "pop temp 0"]
-             (result-commands))))
-    
-
-    
-    )
+             (result-commands)))))
   (testing "with invalid 'do' statement"))
 
 
