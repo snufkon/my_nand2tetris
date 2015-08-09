@@ -7,54 +7,151 @@
  * Represents a String object. Implements the String type.
  */
 class String {
+    field Array chars;
+    field int len;
 
     /** Constructs a new empty String with a maximum length of maxLength. */
     constructor String new(int maxLength) {
+      if (maxLength > 0) {
+        let chars = Array.new(maxLength);
+      }
+      let len = 0;
+
+      return this;
     }
 
     /** De-allocates the string and frees its space. */
     method void dispose() {
+      if (len > 0) {
+        do chars.dispose();
+      }
+      
+      return;    
     }
 
     /** Returns the current length of this String. */
     method int length() {
+      return len;
     }
 
     /** Returns the character at location j. */
     method char charAt(int j) {
+      return chars[j];
     }
 
     /** Sets the j'th character of this string to be c. */
     method void setCharAt(int j, char c) {
+      let chars[j] = c;
+
+      return;
     }
 
     /** Appends the character c to the end of this String.
      *  Returns this string as the return value. */
     method String appendChar(char c) {
+      let chars[len] = c;
+      let len = len + 1;
+      
+      return this;
     }
 
     /** Erases the last character from this String. */
     method void eraseLastChar() {
+      let len = len - 1;
+      return;
     }
 
     /** Returns the integer value of this String until the first non
      *  numeric character. */
     method int intValue() {
+      var int j, sum, d;
+      var char c;
+      let j = len - 1;
+      let d = 1;
+
+      while (~(j < 0)) {
+        let c = charAt(j);
+        if ((c > 47) & (c < 58)) {  // number range of ascii code
+          let sum = sum + (d * (c - 48));
+          let d = d * 10;
+        }
+        let j = j - 1;
+      }
+
+      if (charAt(0) = 45) {  // 45 is ascii code of '-'
+        return -1 * sum;
+      } else {
+        return sum;
+      }
     }
+
+    method int mod(int number, int base) {
+      var int result;
+      let result = number / base;
+      if (result = 0) {
+        return number;
+      } else {
+        return number - (result * base);
+      }
+    }
+
+    method void clear() {
+      while(length() > 0) {
+        do eraseLastChar();
+      }
+      
+      return;
+    }
+
 
     /** Sets this String to hold a representation of the given number. */
     method void setInt(int number) {
+      var Array buf;
+      var int lastDigit, n, j;
+      var char c;
+      
+      let j = 0;
+      let buf = Array.new(6);
+
+      if (number < 0) {
+        let n = -1 * number;
+      } else {
+        let n = number;      
+      }
+
+      while (n > 0) {
+        let lastDigit = mod(n, 10);
+        let buf[j] = lastDigit + 48;
+        let j = j + 1;
+        let n = n / 10;
+      }
+      do clear();
+
+      let j = j - 1;
+      if (number < 0) {
+        do appendChar(45);  // 45 is ascii code of '-' 
+      }
+      while (~(j < 0)) {
+        do appendChar(buf[j]);
+        let j = j - 1;
+      }
+      do buf.dispose();
+      
+      return;
     }
 
     /** Returns the new line character. */
     function char newLine() {
+      return 128;
     }
 
     /** Returns the backspace character. */
     function char backSpace() {
+      return 129;
     }
 
     /** Returns the double quote (") character. */
     function char doubleQuote() {
+      return 34;
     }
 }
