@@ -10,6 +10,7 @@ class Keyboard {
 
     /** Initializes the keyboard. */
     function void init() {
+      return;
     } 
 
     /**
@@ -33,6 +34,7 @@ class Keyboard {
      * F1 - F12 = 141 - 152
      */
     function char keyPressed() {
+      return Memory.peek(24576);
     }
 
     /**								
@@ -41,6 +43,39 @@ class Keyboard {
      * the key to the screen, and returns the value of the pressed key.
      */
     function char readChar() {
+      var char c, key, cursor;
+      var int i, cursorPitch;
+
+      let cursorPitch = 20000;
+      let i = 0;
+      
+      let cursor = 124;  // ascii code of '|'
+      do Output.printChar(cursor);
+
+      while(key = 0) {
+        let key = Keyboard.keyPressed();
+
+        if (i = cursorPitch) {
+          if (cursor = 124) {
+            let cursor = 32; // ascii code of SP
+          } else {
+            let cursor = 124;
+          }
+          do Output.backSpace();
+          do Output.printChar(cursor);
+          let i = 0;
+        }        
+        let i = i + 1;
+      }
+      let c = key;
+      while (~(key = 0)) {
+        let key = Keyboard.keyPressed();
+      }
+
+      do Output.backSpace();
+      do Output.printChar(c);
+
+      return c;
     }
 
     /**								
@@ -48,6 +83,28 @@ class Keyboard {
      * (until a newline character) from the keyboard, and returns its value.
      */
     function String readLine(String message) {
+      var char c;
+      var String s;
+
+      let s = String.new(20);
+
+      do Output.printString(message);
+      while(true) {
+        let c = Keyboard.readChar();
+        if (c = String.newLine()) {
+          return s;
+        }
+        
+        if (c = String.backSpace()) {
+          if (s.length() > 0) {
+            do s.eraseLastChar();
+          }
+        } else {
+          do s.appendChar(c);
+        }
+      }
+      
+      return s;
     }   
 
     /**								
@@ -56,5 +113,8 @@ class Keyboard {
      * integer value (until the first non numeric character).
      */
     function int readInt(String message) {
+      var String s;
+      let s = Keyboard.readLine(message);
+      return s.intValue();
     }
 }
