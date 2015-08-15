@@ -7,26 +7,118 @@
  * Memory operations library.
  */ 
 class Memory {
+    static Array freeList;
 
     /** Initializes memory parameters. */
     function void init() {
+      let freeList =  2048; // 2048 is start address of heap.
+      let freeList[0] = 16383 - 2048 + 1;
+      let freeList[1] = null;
+
+      return;
     }
 
     /** Returns the value of the main memory at the given address. */
     function int peek(int address) {
+      var Array memory;
+      let memory = 0;
+
+      return memory[address];
     }
 
     /** Sets the value of the main memory at this address
      *  to the given value. */
     function void poke(int address, int value) {
+      var Array memory;
+      let memory = 0;
+      let memory[address] = value;
+      
+      return;
+    }
+
+    function Array nextSegment(Array segment) {
+      return segment[1];
+    }
+
+    function Array searchSegment(int size) {
+      var Array curSegment;
+      let curSegment = freeList;
+
+      while (~(curSegment[0] > size)) {
+        let curSegment = Memory.nextSegment(curSegment);
+        if (curSegment = null) {
+          do Sys.error(6); // Heap overflow
+        }
+      }
+
+      return curSegment;
+    }
+
+    function Array returnBlock(Array segment, int size) {
+      var Array block, blockSize;
+      var int blockSizeAddress, newSegmentLength;
+
+      let block = segment + segment[0] - size;
+      let blockSizeAddress = block - 1;
+      let blockSize = blockSizeAddress;
+      let blockSize[0] = size + 1;
+
+      // update segment
+      let newSegmentLength = block - segment - 1;
+      let segment[0] = newSegmentLength;
+
+      return block;
     }
 
     /** finds and allocates from the heap a memory block of the 
      *  specified size and returns a reference to its base address. */
     function int alloc(int size) {
+      var Array segment, block;
+
+      let segment = Memory.searchSegment(size);
+      let block = Memory.returnBlock(segment, size);
+
+      return block;
+    }
+
+    function void addSegmentToFreeList(Array segment) {
+      var Array curSegment;
+
+      let curSegment = freeList;
+      while (~(curSegment[1] = null)) {
+        let curSegment = Memory.nextSegment(curSegment);
+      }
+
+      let curSegment[1] = segment;
+
+      return;
     }
 
     /** De-allocates the given object and frees its space. */
     function void deAlloc(int object) {
-    }    
+      var Array segment;
+      let segment = object - 1;
+      let segment[1] = null;
+
+      do Memory.addSegmentToFreeList(segment);
+
+      return;
+    }
+
+    // for debug
+    function void outputFreeList() {
+      var Array curSegment;
+
+      let curSegment = freeList;
+      
+      while (~(curSegment[1] = null)) {
+        do Output.printInt(curSegment);
+        do Output.println();
+        let curSegment = Memory.nextSegment(curSegment);        
+      }
+      do Output.printInt(curSegment);
+      do Output.println();
+
+      return;
+    }
 }
