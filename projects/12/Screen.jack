@@ -39,13 +39,15 @@ class Screen {
 
     /** Erases the whole screen. */
     function void clearScreen() {
-      var boolean currentColor;
-      let currentColor = blackColor;
+      var Array screen;
+      var int i;
 
-      let blackColor = false;
-      do Screen.drawRectangle(0,0,511,255);
-
-      let blackColor = currentColor;
+      let i = 0;
+      let screen = baseAddress;
+      while (i < 8192) {
+        let screen[i] = 0;
+        let i = i + 1;        
+      }
       
       return;
     }
@@ -57,16 +59,38 @@ class Screen {
       return;
     }
 
+    function int getWordAddress(int x, int y) {
+      return baseAddress + (y*32) + (x/16);
+    }
+
     function int mod(int a, int b) {
       return a - ((a / b) * b);
+    }
+
+    function int getTargetBitLocation(int x) {
+      return Screen.mod(x, 16);
+    }
+
+    function void updateTargetBit(int wordAddress, int targetBit) {
+      var int value;
+      
+      let value = Memory.peek(wordAddress);
+      if (blackColor) {
+        let value = value | twoToThe[targetBit];
+      } else {
+        let value = value & ~twoToThe[targetBit];
+      }
+      do Memory.poke(wordAddress, value);
+
+      return;
     }
 
     /** Draws the (x, y) pixel. */
     function void drawPixel(int x, int y) {
       var int wordAddress, targetBit, value;
 
-      let wordAddress = baseAddress + (y*32) + (x/16);
-      let targetBit = Screen.mod(x, 16);
+      let wordAddress = Screen.getWordAddress(x, y);
+      let targetBit = Screen.getTargetBitLocation(x);
 
       let value = Memory.peek(wordAddress);
       if (blackColor) {
@@ -79,38 +103,72 @@ class Screen {
       return;
     }
 
-    function void drawHorizontalLine(int x, int y1, int y2) {
-      var int j, max;
+    function void drawHorizontalLine(int x1, int x2, int y) {
+      var int startWordAddress, endWordAddress;
+      var int startTargetBit, endTargetBit;
+      var int i, max, temp;
+      var Array screen;
+      
+      if (x1 > x2) {
+        let temp = x1;
+        let x1 = x2;
+        let x2 = temp;
+      }
 
-      if (y1 < y2) {
-        let j = y1;
-        let max = y2;
+      let startWordAddress = Screen.getWordAddress(x1, y);
+      let startTargetBit = Screen.getTargetBitLocation(x1);
+      let endWordAddress = Screen.getWordAddress(x2, y);
+      let endTargetBit = Screen.getTargetBitLocation(x2);
+
+      if (startWordAddress = endWordAddress) {
+        let i = startTargetBit;
+        let max = endTargetBit;
+        while (~(i > max)) {
+          do Screen.updateTargetBit(startWordAddress, i);
+          let i = i + 1;          
+        }
       } else {
-        let j = y2;
-        let max = y1;
-      }
+        let i = startTargetBit;
+        while (i < 16) {
+          do Screen.updateTargetBit(startWordAddress, i);
+          let i = i + 1;          
+        }
 
-      while (~(j > max)) {
-        do Screen.drawPixel(x, j);
-        let j = j + 1;
-      }
+        let i = 0;
+        while (~(i > endTargetBit)) {
+          do Screen.updateTargetBit(endWordAddress, i);
+          let i = i + 1;
+        }
+        let i = startWordAddress + 1;
+        let max = endWordAddress;
 
+        let screen = 0;
+        while (i < max) {
+          if (blackColor) {
+            let screen[i] = -1;
+          } else {
+            let screen[i] = 0;
+          }
+          let i = i + 1;
+        }
+      }
+      
       return;
     }
 
-    function void drawVerticalLine(int y, int x1, int x2) {
+    function void drawVerticalLine(int y1, int y2, int x) {
       var int i, max;
 
-      if (x1 < x2) {
-        let i = x1;
-        let max = x2;
+      if (y1 < y2) {
+        let i = y1;
+        let max = y2;
       } else {
-        let i = x2;
-        let max = x1;
+        let i = y2;
+        let max = y1;
       }
 
       while (~(i > max)) {
-        do Screen.drawPixel(i, y);
+        do Screen.drawPixel(x, i);
         let i = i + 1;
       }
 
@@ -126,14 +184,14 @@ class Screen {
       let dy = y1 - y2;
 
       if (dx = 0) {
-        do Screen.drawHorizontalLine(x1, y1, y2);
+        do Screen.drawVerticalLine(y1, y2, x1);
         return;
       }
       if (dy = 0) {
-        do Screen.drawVerticalLine(y1, x1, x2);
+        do Screen.drawHorizontalLine(x1, x2, y1);
+
         return;
       }
-
       let adyMinusbdx = 0;
       if (dx < 0 & dy > 0) {
         let dx = -dx;
@@ -201,9 +259,9 @@ class Screen {
       let j = y1;
 
       while (~(j > y2)) {
-        do Screen.drawLine(x1, j, x2, j);
+        do Screen.drawHorizontalLine(x1, x2, j);
         let j = j + 1;
-      }
+      }      
       
       return;
     }
@@ -215,7 +273,7 @@ class Screen {
 
       while (~(dy > r)) {
         let temp = Math.sqrt((r*r) - (dy*dy));
-        do Screen.drawLine(cx-temp, cy+dy, cx+temp, cy+dy);
+        do Screen.drawHorizontalLine(cx-temp, cx+temp, cy+dy);
         let dy = dy + 1;
       }
     
